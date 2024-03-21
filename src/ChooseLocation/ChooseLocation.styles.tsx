@@ -38,6 +38,17 @@ export const TabContent = styled.div<{ hidden: boolean }>`
 `;
 
 export const MapContainer = styled.div`
+  position: relative;
+`;
+
+export const SelectedSkateParkItem = styled.div`
+  position: absolute;
+  bottom: 0;
+  width: 100%;
+  z-index: 2;
+`;
+
+export const Map = styled.div`
   width: 95vw;
   max-width: 500px;
   height: 500px;
@@ -49,13 +60,11 @@ export const MapContainer = styled.div`
   .marker {
     height: 35px;
     width: 26.5px;
-    background-image: url('/location_pin.svg');
     cursor: pointer;
 
     &.selected {
       width: 45px;
       height: 60px;
-      background-image: url('/location_pin_selected.svg');
       z-index: 1;
       pointer-events: none;
     }

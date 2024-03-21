@@ -43,7 +43,7 @@ export const apiData: SkateLocationData[] = [
   },
   {
     id: '06',
-    name: 'Skatepark Volkspark Friedrichshain Skatespot',
+    name: 'Skatepark Volkspark Friedrichshain',
     addressLine1: 'Am Shwannenteich in Volkspark',
     addressLine2: '10249 Berlin',
     coordinates: [52.52862654679012, 13.434120746025174],
@@ -59,7 +59,7 @@ export const apiData: SkateLocationData[] = [
   },
   {
     id: '08',
-    name: 'Skatepark Volkspark Friedrichshain Skatepark',
+    name: 'Skatepark Volkspark Friedrichshain',
     addressLine1: 'Am Friedrichshain 15',
     addressLine2: '10407 Berlin',
     coordinates: [52.5296914239982, 13.431444],

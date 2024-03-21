@@ -7,8 +7,10 @@ import {
   ChooseLocationBodyMobile,
   ChooseLocationBodyDesktop,
   MapContainer,
+  Map,
   SkateParks,
   SkateParksList,
+  SelectedSkateParkItem,
   RadioText,
   SkateparkName,
   SkateparkAddressWrapper,
@@ -28,6 +30,7 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapLocationDot, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import * as variables from '../variables';
 import { useDesktopOrMobileView } from '../hooks/useDesktopOrMobileView';
+import { locationPins } from './locationPins';
 
 // check typography https://mui.com/material-ui/react-tabs/
 function CustomTabPanel(props: any) {
@@ -52,7 +55,7 @@ export const ChooseLocation: React.FC<any> = () => {
   const [mapZoom, setMapZoom] = useState<any>(10);
   const [map, setMap] = useState<any>();
 
-  const [skateLocations, setSkateLocations] = useState<SkateLocationData[]>(apiData);
+  const [skateparks, setSkateparks] = useState<SkateLocationData[]>(apiData);
   const [selectedSkatepark, setSelectedSkatepark] = useState<{
     id: string;
     source: 'marker' | 'listItem';
@@ -68,8 +71,7 @@ export const ChooseLocation: React.FC<any> = () => {
       center: [mapLongitude, mapLatitude],
       zoom: mapZoom,
       doubleClickZoom: false,
-      dragRotate: false,
-      touchZoomRotate: false
+      dragRotate: false
     });
     mapInstance.addControl(new tt.NavigationControl({ showCompass: false }));
     setMap(mapInstance);
@@ -79,26 +81,28 @@ export const ChooseLocation: React.FC<any> = () => {
 
   const createMarkers = () => {
     const markersArray: any = [];
-    skateLocations.forEach((skateLocation) => {
-      /* const divElem = document.createElement('div');
+    skateparks.forEach((skatepark) => {
+      const divElem = document.createElement('div');
       divElem.className = 'marker';
-      divElem.id = `marker_${skateLocation.id}`; */
+      divElem.id = `marker_${skatepark.id}`;
+      divElem.innerHTML = locationPins.default;
 
       const marker = new tt.Marker({
-        // element: divElem,
+        element: divElem,
         draggable: false,
         color: 'black',
         height: '36',
         width: '30'
       })
-        .setLngLat({ lng: skateLocation.coordinates[1], lat: skateLocation.coordinates[0] })
+        .setLngLat({ lng: skatepark.coordinates[1], lat: skatepark.coordinates[0] })
         .addTo(map);
 
-      markersArray.push({ ref: marker, id: skateLocation.id });
+      markersArray.push({ ref: marker, id: skatepark.id });
 
       const markerElement = marker.getElement();
+      // markerElement.style.cursor = 'pointer';
       markerElement.addEventListener('click', () => {
-        setSelectedSkatepark({ id: skateLocation.id, source: 'marker' });
+        setSelectedSkatepark({ id: skatepark.id, source: 'marker' });
       });
     });
     setMarkerRefs(markersArray);
@@ -119,12 +123,13 @@ export const ChooseLocation: React.FC<any> = () => {
       foundSelectedMarkerRef.remove();
 
       const selectedMarkerLatLong = foundSelectedMarkerRef.getLngLat();
-      /* const divElem = document.createElement('div');
+      const divElem = document.createElement('div');
       divElem.className = 'marker selected';
-      divElem.id = `marker_${selectedSkatepark.id}`; */
+      divElem.id = `marker_${selectedSkatepark.id}`;
+      divElem.innerHTML = locationPins.selected;
 
       const selectedMarker = new tt.Marker({
-        //element: divElem,
+        element: divElem,
         draggable: false,
         color: 'green',
         height: '54',
@@ -133,10 +138,10 @@ export const ChooseLocation: React.FC<any> = () => {
         .setLngLat(selectedMarkerLatLong)
         .addTo(map);
 
-      const selectedMarkerElement = selectedMarker.getElement();
+      /* const selectedMarkerElement = selectedMarker.getElement();
       selectedMarkerElement.addEventListener('click', () => {
         setSelectedSkatepark({ id: selectedSkatepark.id, source: 'marker' });
-      });
+      }); */
 
       // zoom in on new selected marker
       if (selectedSkatepark.source === 'listItem') {
@@ -144,23 +149,24 @@ export const ChooseLocation: React.FC<any> = () => {
       }
 
       // update previously selected marker's icon
-      /* const previouslySelectedMarker = markerRefs.find((marker: any) =>
+      const previouslySelectedMarker = markerRefs.find((marker: any) =>
         marker.ref.getElement().classList.contains('selected')
-      ); */
-      const previouslySelectedMarker = markerRefs.find(
+      );
+      /* const previouslySelectedMarker = markerRefs.find(
         (marker: any) =>
           marker.ref.getElement().getElementsByTagName('svg')[0].getAttribute('fill') === 'green'
-      );
+      ); */
       if (previouslySelectedMarker) {
         previouslySelectedMarker.ref.remove();
 
         const prevSelectedMarkerLatLong = previouslySelectedMarker.ref.getLngLat();
-        /* const divElemp = document.createElement('div');
-        divElemp.className = 'marker';
-        divElemp.id = `marker_${previouslySelectedMarker.id}`; */
+        const divSelectedElem = document.createElement('div');
+        divSelectedElem.className = 'marker';
+        divSelectedElem.id = `marker_${previouslySelectedMarker.id}`;
+        divSelectedElem.innerHTML = locationPins.default;
 
         const prevSelectedMarker = new tt.Marker({
-          //element: divElemp,
+          element: divSelectedElem,
           draggable: false,
           color: 'black',
           height: '36',
@@ -170,6 +176,7 @@ export const ChooseLocation: React.FC<any> = () => {
           .addTo(map);
 
         const markerElement = prevSelectedMarker.getElement();
+        markerElement.style.cursor = 'pointer';
         markerElement.addEventListener('click', () => {
           setSelectedSkatepark({ id: previouslySelectedMarker.id, source: 'marker' });
         });
@@ -212,14 +219,14 @@ export const ChooseLocation: React.FC<any> = () => {
     }
   }, [selectedSkatepark]);
 
-  const [value, setValue] = React.useState(0);
+  const [selectedTab, setSelectedTab] = React.useState(0);
 
-  const handleChange = (event: React.SyntheticEvent, newValue: number) => {
-    setValue(newValue);
+  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+    setSelectedTab(newValue);
   };
 
   useEffect(() => {
-    if (value === 1 && selectedSkatepark) {
+    if (selectedTab === 1 && selectedSkatepark) {
       // scroll skate park list item to top of the list, after clicking on a list view
       const foundSkateParkItem = skateParkItemsRef.current.find(
         (elem) => elem.dataset.skateParkId === selectedSkatepark.id
@@ -232,10 +239,56 @@ export const ChooseLocation: React.FC<any> = () => {
         });
       }
     }
-  }, [value]);
+  }, [selectedTab]);
 
   const renderMapComponent = () => {
-    return <MapContainer ref={mapElement} className="mapDiv" />;
+    const selectedSkateparkObj = skateparks.find((item) => item.id == selectedSkatepark?.id);
+    return (
+      <MapContainer>
+        <Map ref={mapElement} className="mapDiv" />
+        {selectedSkateparkObj && (
+          <SelectedSkateParkItem>
+            <Sheet
+              component="label"
+              variant="outlined"
+              sx={{
+                p: 1,
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'left',
+                boxShadow: 'sm',
+                borderRadius: 'md'
+              }}
+            >
+              <RadioText>
+                <SkateparkName>{selectedSkateparkObj.name}</SkateparkName>
+                <SkateparkAddressWrapper>
+                  <FontAwesomeIcon icon={faMapLocationDot} />
+                  <Address>
+                    <AddressLine1>{selectedSkateparkObj.addressLine1}</AddressLine1>
+                    <AddressLine2>{selectedSkateparkObj.addressLine2}</AddressLine2>
+                  </Address>
+                </SkateparkAddressWrapper>
+                <SkateparkFeaturesWrapper>
+                  <FontAwesomeIcon icon={faCircleInfo} />
+                  <Features>
+                    {selectedSkateparkObj.features.map((feature, featureIndex) => {
+                      return (
+                        <span key={featureIndex}>
+                          {feature}{' '}
+                          {featureIndex === selectedSkateparkObj.features.length - 1 ? '' : ', '}{' '}
+                        </span>
+                      );
+                    })}
+                  </Features>
+                </SkateparkFeaturesWrapper>
+              </RadioText>
+            </Sheet>
+          </SelectedSkateParkItem>
+        )}
+      </MapContainer>
+    );
   };
 
   const renderSkateParks = () => {
@@ -251,12 +304,12 @@ export const ChooseLocation: React.FC<any> = () => {
                 setSelectedSkatepark({ id: e.target.value, source: 'listItem' });
               }}
             >
-              {skateLocations.map((skateLocation, index) => {
+              {skateparks.map((skatepark, index) => {
                 return (
                   <Sheet
-                    key={skateLocation.id}
+                    key={skatepark.id}
                     ref={(element: any) => skateParkItemsRef.current.splice(index, 1, element)}
-                    data-skate-park-id={skateLocation.id}
+                    data-skate-park-id={skatepark.id}
                     component="label"
                     variant="outlined"
                     sx={{
@@ -269,24 +322,24 @@ export const ChooseLocation: React.FC<any> = () => {
                       borderRadius: 'md'
                     }}
                   >
-                    <Radio value={skateLocation.id} />
+                    <Radio value={skatepark.id} />
                     <RadioText>
-                      <SkateparkName>{skateLocation.name}</SkateparkName>
+                      <SkateparkName>{skatepark.name}</SkateparkName>
                       <SkateparkAddressWrapper>
                         <FontAwesomeIcon icon={faMapLocationDot} />
                         <Address>
-                          <AddressLine1>{skateLocation.addressLine1}</AddressLine1>
-                          <AddressLine2>{skateLocation.addressLine2}</AddressLine2>
+                          <AddressLine1>{skatepark.addressLine1}</AddressLine1>
+                          <AddressLine2>{skatepark.addressLine2}</AddressLine2>
                         </Address>
                       </SkateparkAddressWrapper>
                       <SkateparkFeaturesWrapper>
                         <FontAwesomeIcon icon={faCircleInfo} />
                         <Features>
-                          {skateLocation.features.map((feature, featureIndex) => {
+                          {skatepark.features.map((feature, featureIndex) => {
                             return (
                               <span key={featureIndex}>
                                 {feature}{' '}
-                                {featureIndex === skateLocation.features.length - 1 ? '' : ', '}{' '}
+                                {featureIndex === skatepark.features.length - 1 ? '' : ', '}{' '}
                               </span>
                             );
                           })}
@@ -321,15 +374,15 @@ export const ChooseLocation: React.FC<any> = () => {
                 marginBottom: variables.spacingS
               }}
             >
-              <Tabs value={value} onChange={handleChange}>
+              <Tabs value={selectedTab} onChange={handleTabChange}>
                 <Tab label="Map view" />
                 <Tab label="List view" />
               </Tabs>
             </Box>
-            <CustomTabPanel value={value} index={0}>
+            <CustomTabPanel value={selectedTab} index={0}>
               {renderMapComponent()}
             </CustomTabPanel>
-            <CustomTabPanel value={value} index={1}>
+            <CustomTabPanel value={selectedTab} index={1}>
               {renderSkateParks()}
             </CustomTabPanel>
           </Box>
