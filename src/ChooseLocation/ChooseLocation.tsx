@@ -234,7 +234,7 @@ export const ChooseLocation: React.FC<any> = () => {
       const skateParkItemTop = foundSkateParkItem?.getBoundingClientRect().top;
       const skateParksListTop = skateParksListRef?.current?.getBoundingClientRect().top;
       if (skateParkItemTop && skateParksListTop && selectedSkatepark.source === 'marker') {
-        skateParksListRef?.current?.scrollBy({
+        skateParksListRef?.current?.scroll({
           top: skateParkItemTop - skateParksListTop
         });
       }
@@ -246,7 +246,7 @@ export const ChooseLocation: React.FC<any> = () => {
     return (
       <MapContainer>
         <Map ref={mapElement} className="mapDiv" />
-        {selectedSkateparkObj && (
+        {!isDesktop && selectedSkateparkObj && (
           <SelectedSkateParkItem>
             <Sheet
               component="label"
@@ -261,6 +261,7 @@ export const ChooseLocation: React.FC<any> = () => {
                 borderRadius: 'md'
               }}
             >
+              <Radio checked />
               <RadioText>
                 <SkateparkName>{selectedSkateparkObj.name}</SkateparkName>
                 <SkateparkAddressWrapper>
