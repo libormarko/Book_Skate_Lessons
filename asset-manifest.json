@@ -1,15 +1,15 @@
 {
   "files": {
     "main.css": "/Book_Skate_Lessons/static/css/main.3ce8812b.css",
-    "main.js": "/Book_Skate_Lessons/static/js/main.817e26f9.js",
+    "main.js": "/Book_Skate_Lessons/static/js/main.1aec918a.js",
     "static/js/453.2f59324d.chunk.js": "/Book_Skate_Lessons/static/js/453.2f59324d.chunk.js",
     "index.html": "/Book_Skate_Lessons/index.html",
     "main.3ce8812b.css.map": "/Book_Skate_Lessons/static/css/main.3ce8812b.css.map",
-    "main.817e26f9.js.map": "/Book_Skate_Lessons/static/js/main.817e26f9.js.map",
+    "main.1aec918a.js.map": "/Book_Skate_Lessons/static/js/main.1aec918a.js.map",
     "453.2f59324d.chunk.js.map": "/Book_Skate_Lessons/static/js/453.2f59324d.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.3ce8812b.css",
-    "static/js/main.817e26f9.js"
+    "static/js/main.1aec918a.js"
   ]
 }
