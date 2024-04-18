@@ -35,6 +35,8 @@ import { TabPanel } from '../TabPanel/TabPanel';
 
 // TODO split component to smaller ones: Map, SkateParkList, SkateParkListItem
 // TODO specify any types
+// TODO add disclaimer
+// TODO create strings json
 
 interface ChooseLocationProps {
   setView: Dispatch<{ view: Views }>;
@@ -74,7 +76,7 @@ export const ChooseLocation: React.FC<ChooseLocationProps> = ({ setView }) => {
     setMap(mapInstance);
 
     return () => mapInstance.remove();
-  }, []);
+  }, [isDesktop]);
 
   useEffect(() => {
     if (map) {

@@ -30,6 +30,8 @@ import {
 } from './PickSkateAndTimeslot.styles';
 import { styled } from '@mui/material/styles';
 import dayjs from 'dayjs';
+import updateLocale from 'dayjs/plugin/updateLocale';
+import { useAvailableTimeslots } from '../hooks/useAvailableTimeslots';
 import { time } from 'console';
 
 export const TimeslotButton = styled(Button)<any>(({ selected }) => ({
@@ -41,9 +43,6 @@ export const TimeslotButton = styled(Button)<any>(({ selected }) => ({
   }
 }));
 
-// TODO add different time slots based on a day
-export const timeslots: any[] = ['10:00-12:00', '12:00-14:00', '14:00-16:00'];
-
 // TODO specify any types
 
 interface TimeslotPickerProps {
@@ -52,6 +51,25 @@ interface TimeslotPickerProps {
 }
 
 export const TimeslotPicker: React.FC<any> = ({ selectedTimeslot, setSelectedTimeslot }) => {
+  const [availableTimeslots, setAvailableTimeslots] = useState<any[] | undefined>(undefined);
+
+  const findAvailableTimeslots = useAvailableTimeslots();
+
+  useEffect(() => {
+    dayjs.extend(updateLocale);
+    dayjs.updateLocale('en', {
+      weekStart: 1
+    });
+  }, []);
+
+  useEffect(() => {
+    if (selectedTimeslot?.date) {
+      const date = new Date(selectedTimeslot.date);
+      const foundTimeslots = findAvailableTimeslots(date.getDay());
+      setAvailableTimeslots(foundTimeslots);
+    }
+  }, [selectedTimeslot]);
+
   const handleDatePick = (date: any) => {
     setSelectedTimeslot({ date: date?.format('YYYY-MM-DD'), time: null });
   };
@@ -68,21 +86,22 @@ export const TimeslotPicker: React.FC<any> = ({ selectedTimeslot, setSelectedTim
           />
         </LocalizationProvider>
       </DateTimeSelection>
-      {selectedTimeslot?.date &&
-        timeslots.map((timeslot) => {
-          return (
-            <TimeslotButton
-              key={timeslot}
-              selected={timeslot === selectedTimeslot?.time}
-              variant="contained"
-              onClick={() =>
-                setSelectedTimeslot((prevState: any) => ({ ...prevState, time: timeslot }))
-              }
-            >
-              {timeslot}
-            </TimeslotButton>
-          );
-        })}
+      {selectedTimeslot?.date && availableTimeslots && availableTimeslots.length === 0
+        ? 'No available spots, pick a different date'
+        : availableTimeslots?.map((timeslot) => {
+            return (
+              <TimeslotButton
+                key={timeslot}
+                selected={timeslot === selectedTimeslot?.time}
+                variant="contained"
+                onClick={() =>
+                  setSelectedTimeslot((prevState: any) => ({ ...prevState, time: timeslot }))
+                }
+              >
+                {timeslot}
+              </TimeslotButton>
+            );
+          })}
     </TimeslotPickerContainer>
   );
 };

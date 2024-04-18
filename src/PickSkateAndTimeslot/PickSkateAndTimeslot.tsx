@@ -87,6 +87,7 @@ export const PickSkateAndTimeslot: React.FC<PickSkateAndTimeslotProps> = ({ setV
                   name="skate-parks-radio-group"
                 />
                 <BoardName>{board.name}</BoardName>
+                {/* TODO change longboard picture without shadow below */}
                 <BoardImage
                   src={process.env.PUBLIC_URL + `/${board.name}.jpg`}
                   alt={`${board.name}_image`}
