@@ -33,10 +33,6 @@ export const ChooseLocationBodyMobile = styled.div`
   }
 `;
 
-export const TabContent = styled.div<{ hidden: boolean }>`
-  display: ${(props) => (props.hidden ? 'none' : 'block')};
-`;
-
 export const MapContainer = styled.div`
   position: relative;
 `;
@@ -101,11 +97,11 @@ export const RadioText = styled.div`
   }
 `;
 
-export const SkateparkName = styled.div`
+export const SkateParkName = styled.div`
   font-weight: 700;
 `;
 
-export const SkateparkAddressWrapper = styled.div`
+export const SkateParkAddressWrapper = styled.div`
   display: flex;
   align-items: center;
 `;
@@ -118,7 +114,7 @@ export const AddressLine1 = styled.p``;
 
 export const AddressLine2 = styled.p``;
 
-export const SkateparkFeaturesWrapper = styled.div`
+export const SkateParkFeaturesWrapper = styled.div`
   display: flex;
   align-items: center;
 `;

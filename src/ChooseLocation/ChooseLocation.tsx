@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useCallback, Dispatch } from 'react';
 import '@tomtom-international/web-sdk-maps/dist/maps.css';
 import tt, { LngLat } from '@tomtom-international/web-sdk-maps';
 import {
@@ -12,57 +12,54 @@ import {
   SkateParksList,
   SelectedSkateParkItem,
   RadioText,
-  SkateparkName,
-  SkateparkAddressWrapper,
+  SkateParkName,
+  SkateParkAddressWrapper,
   Address,
   AddressLine1,
   AddressLine2,
-  SkateparkFeaturesWrapper,
-  Features,
-  TabContent
+  SkateParkFeaturesWrapper,
+  Features
 } from './ChooseLocation.styles';
 import { apiData } from '../data/apiData';
-import { SkateLocationData } from '../types/common';
+import { SkateLocationData, Views } from '../types/common';
 import { Radio, RadioGroup, FormControl, Button, Box, Tabs, Tab } from '@mui/material';
-import SendIcon from '@mui/icons-material/Send';
+import ArrowForward from '@mui/icons-material/ArrowForward';
 import { Sheet } from '@mui/joy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapLocationDot, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import * as variables from '../variables';
 import { useDesktopOrMobileView } from '../hooks/useDesktopOrMobileView';
-import { locationPins } from './locationPins';
+import { useMarkerAndSkateParkService } from './useMarkerAndSkateParkService';
+import { scrollSkateParkItemToTheTop } from '../utils/utils';
+import { TabPanel } from '../TabPanel/TabPanel';
 
-// check typography https://mui.com/material-ui/react-tabs/
-function CustomTabPanel(props: any) {
-  const { children, value, index } = props;
+// TODO split component to smaller ones: Map, SkateParkList, SkateParkListItem
+// TODO specify any types
 
-  return (
-    <TabContent hidden={value !== index}>
-      <Box>
-        <div>{children}</div>
-      </Box>
-    </TabContent>
-  );
+interface ChooseLocationProps {
+  setView: Dispatch<{ view: Views }>;
 }
 
-export const ChooseLocation: React.FC<any> = () => {
+export const ChooseLocation: React.FC<ChooseLocationProps> = ({ setView }) => {
   const mapElement = useRef<any>();
   const skateParksListRef = useRef<any>();
   const skateParkItemsRef = useRef<any[]>([]);
 
-  const [mapLatitude, setMapLatitude] = useState<any>(52.520008);
-  const [mapLongitude, setMapLongitude] = useState<any>(13.404954);
-  const [mapZoom, setMapZoom] = useState<any>(10);
+  const [mapLatitude, _setMapLatitude] = useState<any>(52.520008);
+  const [mapLongitude, _setMapLongitude] = useState<any>(13.404954);
+  const [mapZoom, _setMapZoom] = useState<any>(10);
   const [map, setMap] = useState<any>();
-
-  const [skateparks, setSkateparks] = useState<SkateLocationData[]>(apiData);
-  const [selectedSkatepark, setSelectedSkatepark] = useState<{
-    id: string;
-    source: 'marker' | 'listItem';
-  }>();
-  const [markerRefs, setMarkerRefs] = useState<any>([]);
+  const [skateParks, _setSkateParks] = useState<SkateLocationData[]>(apiData);
+  const [selectedTab, setSelectedTab] = useState(0);
 
   const isDesktop = useDesktopOrMobileView() === 'desktop';
+
+  const { selectedSkatePark, createMarkers, setSelectedSkatePark } = useMarkerAndSkateParkService(
+    skateParks,
+    map,
+    skateParkItemsRef,
+    skateParksListRef
+  );
 
   useEffect(() => {
     const mapInstance = tt.map({
@@ -79,170 +76,28 @@ export const ChooseLocation: React.FC<any> = () => {
     return () => mapInstance.remove();
   }, []);
 
-  const createMarkers = () => {
-    const markersArray: any = [];
-    skateparks.forEach((skatepark) => {
-      const divElem = document.createElement('div');
-      divElem.className = 'marker';
-      divElem.id = `marker_${skatepark.id}`;
-      divElem.innerHTML = locationPins.default;
-
-      const marker = new tt.Marker({
-        element: divElem,
-        draggable: false,
-        color: 'black',
-        height: '36',
-        width: '30'
-      })
-        .setLngLat({ lng: skatepark.coordinates[1], lat: skatepark.coordinates[0] })
-        .addTo(map);
-
-      markersArray.push({ ref: marker, id: skatepark.id });
-
-      const markerElement = marker.getElement();
-      // markerElement.style.cursor = 'pointer';
-      markerElement.addEventListener('click', () => {
-        setSelectedSkatepark({ id: skatepark.id, source: 'marker' });
-      });
-    });
-    setMarkerRefs(markersArray);
-  };
-
   useEffect(() => {
     if (map) {
       createMarkers();
+
+      const userDecision = sessionStorage.getItem('bookSkateLesson');
+      const parsedUserDecision = userDecision && JSON.parse(decodeURIComponent(userDecision));
+      if (parsedUserDecision) setSelectedSkatePark({ id: parsedUserDecision.id, source: 'marker' });
     }
   }, [map]);
 
-  useEffect(() => {
-    if (selectedSkatepark) {
-      // update selected marker's icon
-      const foundSelectedMarkerRef = markerRefs.find(
-        (marker: any) => marker.id === selectedSkatepark.id
-      )?.ref;
-      foundSelectedMarkerRef.remove();
-
-      const selectedMarkerLatLong = foundSelectedMarkerRef.getLngLat();
-      const divElem = document.createElement('div');
-      divElem.className = 'marker selected';
-      divElem.id = `marker_${selectedSkatepark.id}`;
-      divElem.innerHTML = locationPins.selected;
-
-      const selectedMarker = new tt.Marker({
-        element: divElem,
-        draggable: false,
-        color: 'green',
-        height: '54',
-        width: '45'
-      })
-        .setLngLat(selectedMarkerLatLong)
-        .addTo(map);
-
-      /* const selectedMarkerElement = selectedMarker.getElement();
-      selectedMarkerElement.addEventListener('click', () => {
-        setSelectedSkatepark({ id: selectedSkatepark.id, source: 'marker' });
-      }); */
-
-      // zoom in on new selected marker
-      if (selectedSkatepark.source === 'listItem') {
-        map.panTo(selectedMarkerLatLong);
-      }
-
-      // update previously selected marker's icon
-      const previouslySelectedMarker = markerRefs.find((marker: any) =>
-        marker.ref.getElement().classList.contains('selected')
-      );
-      /* const previouslySelectedMarker = markerRefs.find(
-        (marker: any) =>
-          marker.ref.getElement().getElementsByTagName('svg')[0].getAttribute('fill') === 'green'
-      ); */
-      if (previouslySelectedMarker) {
-        previouslySelectedMarker.ref.remove();
-
-        const prevSelectedMarkerLatLong = previouslySelectedMarker.ref.getLngLat();
-        const divSelectedElem = document.createElement('div');
-        divSelectedElem.className = 'marker';
-        divSelectedElem.id = `marker_${previouslySelectedMarker.id}`;
-        divSelectedElem.innerHTML = locationPins.default;
-
-        const prevSelectedMarker = new tt.Marker({
-          element: divSelectedElem,
-          draggable: false,
-          color: 'black',
-          height: '36',
-          width: '30'
-        })
-          .setLngLat(prevSelectedMarkerLatLong)
-          .addTo(map);
-
-        const markerElement = prevSelectedMarker.getElement();
-        markerElement.style.cursor = 'pointer';
-        markerElement.addEventListener('click', () => {
-          setSelectedSkatepark({ id: previouslySelectedMarker.id, source: 'marker' });
-        });
-
-        // update markers ref to contain current selected / not selected status
-        setMarkerRefs(
-          markerRefs.map((item: any) => {
-            return item.id === selectedSkatepark.id
-              ? { ref: selectedMarker, id: selectedSkatepark.id }
-              : item.id === previouslySelectedMarker.id
-                ? { ref: prevSelectedMarker, id: previouslySelectedMarker.id }
-                : { ...item };
-          })
-        );
-      }
-
-      // update markers ref in initial case of app load, when no marker had been selected previously yet
-      if (!previouslySelectedMarker) {
-        setMarkerRefs(
-          markerRefs.map((item: any) => {
-            return item.id === selectedSkatepark.id
-              ? { ref: selectedMarker, id: selectedSkatepark.id }
-              : { ...item };
-          })
-        );
-      }
-
-      // scroll skate park list item to top of the list, after clicking on a marker
-      const foundSkateParkItem = skateParkItemsRef.current.find(
-        (elem) => elem.dataset.skateParkId === selectedSkatepark.id
-      );
-      const skateParkItemTop = foundSkateParkItem?.getBoundingClientRect().top;
-      const skateParksListTop = skateParksListRef?.current?.getBoundingClientRect().top;
-      if (skateParkItemTop && skateParksListTop && selectedSkatepark.source === 'marker') {
-        skateParksListRef?.current?.scrollBy({
-          top: skateParkItemTop - skateParksListTop,
-          behavior: 'smooth'
-        });
-      }
-    }
-  }, [selectedSkatepark]);
-
-  const [selectedTab, setSelectedTab] = React.useState(0);
-
-  const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
+  const handleTabChange = useCallback((_event: React.SyntheticEvent, newValue: number) => {
     setSelectedTab(newValue);
-  };
+  }, []);
 
   useEffect(() => {
-    if (selectedTab === 1 && selectedSkatepark) {
-      // scroll skate park list item to top of the list, after clicking on a list view
-      const foundSkateParkItem = skateParkItemsRef.current.find(
-        (elem) => elem.dataset.skateParkId === selectedSkatepark.id
-      );
-      const skateParkItemTop = foundSkateParkItem?.getBoundingClientRect().top;
-      const skateParksListTop = skateParksListRef?.current?.getBoundingClientRect().top;
-      if (skateParkItemTop && skateParksListTop && selectedSkatepark.source === 'marker') {
-        skateParksListRef?.current?.scroll({
-          top: skateParkItemTop - skateParksListTop
-        });
-      }
+    if (selectedTab === 1 && selectedSkatePark) {
+      scrollSkateParkItemToTheTop(skateParkItemsRef, skateParksListRef, selectedSkatePark);
     }
   }, [selectedTab]);
 
   const renderMapComponent = () => {
-    const selectedSkateparkObj = skateparks.find((item) => item.id == selectedSkatepark?.id);
+    const selectedSkateparkObj = skateParks.find((item) => item.id == selectedSkatePark?.id);
     return (
       <MapContainer>
         <Map ref={mapElement} className="mapDiv" />
@@ -263,15 +118,15 @@ export const ChooseLocation: React.FC<any> = () => {
             >
               <Radio checked />
               <RadioText>
-                <SkateparkName>{selectedSkateparkObj.name}</SkateparkName>
-                <SkateparkAddressWrapper>
+                <SkateParkName>{selectedSkateparkObj.name}</SkateParkName>
+                <SkateParkAddressWrapper>
                   <FontAwesomeIcon icon={faMapLocationDot} />
                   <Address>
                     <AddressLine1>{selectedSkateparkObj.addressLine1}</AddressLine1>
                     <AddressLine2>{selectedSkateparkObj.addressLine2}</AddressLine2>
                   </Address>
-                </SkateparkAddressWrapper>
-                <SkateparkFeaturesWrapper>
+                </SkateParkAddressWrapper>
+                <SkateParkFeaturesWrapper>
                   <FontAwesomeIcon icon={faCircleInfo} />
                   <Features>
                     {selectedSkateparkObj.features.map((feature, featureIndex) => {
@@ -283,7 +138,7 @@ export const ChooseLocation: React.FC<any> = () => {
                       );
                     })}
                   </Features>
-                </SkateparkFeaturesWrapper>
+                </SkateParkFeaturesWrapper>
               </RadioText>
             </Sheet>
           </SelectedSkateParkItem>
@@ -299,18 +154,18 @@ export const ChooseLocation: React.FC<any> = () => {
           <SkateParksList ref={skateParksListRef}>
             <RadioGroup
               name="radio-buttons-skate-parks-group"
-              value={selectedSkatepark?.id || 'default'}
+              value={selectedSkatePark?.id || 'default'}
               onChange={(e) => {
                 e.preventDefault();
-                setSelectedSkatepark({ id: e.target.value, source: 'listItem' });
+                setSelectedSkatePark({ id: e.target.value, source: 'listItem' });
               }}
             >
-              {skateparks.map((skatepark, index) => {
+              {skateParks.map((skatePark, index) => {
                 return (
                   <Sheet
-                    key={skatepark.id}
+                    key={skatePark.id}
                     ref={(element: any) => skateParkItemsRef.current.splice(index, 1, element)}
-                    data-skate-park-id={skatepark.id}
+                    data-skate-park-id={skatePark.id}
                     component="label"
                     variant="outlined"
                     sx={{
@@ -323,29 +178,29 @@ export const ChooseLocation: React.FC<any> = () => {
                       borderRadius: 'md'
                     }}
                   >
-                    <Radio value={skatepark.id} />
+                    <Radio value={skatePark.id} />
                     <RadioText>
-                      <SkateparkName>{skatepark.name}</SkateparkName>
-                      <SkateparkAddressWrapper>
+                      <SkateParkName>{skatePark.name}</SkateParkName>
+                      <SkateParkAddressWrapper>
                         <FontAwesomeIcon icon={faMapLocationDot} />
                         <Address>
-                          <AddressLine1>{skatepark.addressLine1}</AddressLine1>
-                          <AddressLine2>{skatepark.addressLine2}</AddressLine2>
+                          <AddressLine1>{skatePark.addressLine1}</AddressLine1>
+                          <AddressLine2>{skatePark.addressLine2}</AddressLine2>
                         </Address>
-                      </SkateparkAddressWrapper>
-                      <SkateparkFeaturesWrapper>
+                      </SkateParkAddressWrapper>
+                      <SkateParkFeaturesWrapper>
                         <FontAwesomeIcon icon={faCircleInfo} />
                         <Features>
-                          {skatepark.features.map((feature, featureIndex) => {
+                          {skatePark.features.map((feature, featureIndex) => {
                             return (
                               <span key={featureIndex}>
                                 {feature}{' '}
-                                {featureIndex === skatepark.features.length - 1 ? '' : ', '}{' '}
+                                {featureIndex === skatePark.features.length - 1 ? '' : ', '}{' '}
                               </span>
                             );
                           })}
                         </Features>
-                      </SkateparkFeaturesWrapper>
+                      </SkateParkFeaturesWrapper>
                     </RadioText>
                   </Sheet>
                 );
@@ -357,11 +212,30 @@ export const ChooseLocation: React.FC<any> = () => {
     );
   };
 
+  const handleSkateParkSubmit = () => {
+    const selectedSkateParkSourceData = skateParks.find(
+      (item) => item.id === selectedSkatePark?.id
+    );
+    const selectedSkateParkStoreData = {
+      id: selectedSkateParkSourceData?.id,
+      name: selectedSkateParkSourceData?.name,
+      addressLine1: selectedSkateParkSourceData?.addressLine1,
+      addressLine2: selectedSkateParkSourceData?.addressLine2
+    };
+    if (selectedSkateParkSourceData) {
+      sessionStorage.setItem(
+        'bookSkateLesson',
+        encodeURIComponent(JSON.stringify(selectedSkateParkStoreData))
+      );
+      setView({ view: 'pick_skate_and_timeslot' });
+    }
+  };
+
   return (
     <ChooseLocationContainer>
       <ChooseLocationHeader>
         <h1>Book a skate lesson</h1>
-        <p>Select a skate park location by clicking on a pin or selecting one from the list</p>
+        <h3>Select a skate park location by clicking on a pin or selecting one from the list</h3>
       </ChooseLocationHeader>
       {!isDesktop ? (
         <ChooseLocationBodyMobile>
@@ -380,12 +254,12 @@ export const ChooseLocation: React.FC<any> = () => {
                 <Tab label="List view" />
               </Tabs>
             </Box>
-            <CustomTabPanel value={selectedTab} index={0}>
+            <TabPanel value={selectedTab} index={0}>
               {renderMapComponent()}
-            </CustomTabPanel>
-            <CustomTabPanel value={selectedTab} index={1}>
+            </TabPanel>
+            <TabPanel value={selectedTab} index={1}>
               {renderSkateParks()}
-            </CustomTabPanel>
+            </TabPanel>
           </Box>
         </ChooseLocationBodyMobile>
       ) : (
@@ -396,11 +270,9 @@ export const ChooseLocation: React.FC<any> = () => {
       )}
       <Button
         variant="contained"
-        disabled={selectedSkatepark?.id === undefined}
-        onClick={() => {
-          alert('Next step is in development');
-        }}
-        endIcon={<SendIcon />}
+        disabled={selectedSkatePark?.id === undefined}
+        onClick={() => handleSkateParkSubmit()}
+        endIcon={<ArrowForward />}
       >
         Confirm
       </Button>

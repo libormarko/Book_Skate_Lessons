@@ -32,10 +32,12 @@
       "linebreak-style": "off",
       "react-hooks/rules-of-hooks": "error",
       "react-hooks/exhaustive-deps": "warn",
+      "@typescript-eslint/naming-convention": "off",
       "prettier/prettier": [
         "error",
         {
-          "endOfLine": "auto"
+          "endOfLine": "auto",
+          "namingConvention": "off"
         }
       ],
       "import/extensions": [
