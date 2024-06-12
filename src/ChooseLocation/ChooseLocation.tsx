@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useRef, useCallback, Dispatch } from 'react';
 import '@tomtom-international/web-sdk-maps/dist/maps.css';
-import tt, { LngLat } from '@tomtom-international/web-sdk-maps';
+import tt from '@tomtom-international/web-sdk-maps';
 import {
   ChooseLocationContainer,
   ChooseLocationHeader,
@@ -20,8 +20,8 @@ import {
   SkateParkFeaturesWrapper,
   Features
 } from './ChooseLocation.styles';
-import { apiData } from '../data/apiData';
-import { SkateLocationData, Views } from '../types/common';
+import { apiData } from '../apiData/skateLocations';
+import { SkateLocationData, UserDecision, Views } from '../types/common';
 import { Radio, RadioGroup, FormControl, Button, Box, Tabs, Tab } from '@mui/material';
 import ArrowForward from '@mui/icons-material/ArrowForward';
 import { Sheet } from '@mui/joy';
@@ -32,24 +32,24 @@ import { useDesktopOrMobileView } from '../hooks/useDesktopOrMobileView';
 import { useMarkerAndSkateParkService } from './useMarkerAndSkateParkService';
 import { scrollSkateParkItemToTheTop } from '../utils/utils';
 import { TabPanel } from '../TabPanel/TabPanel';
+import { i18nEN } from '../apiData/i18nEN';
+import { getItemFromSessionStorage } from '../utils/utils';
 
 // TODO split component to smaller ones: Map, SkateParkList, SkateParkListItem
-// TODO specify any types
-// TODO add disclaimer
-// TODO create strings json
 
 interface ChooseLocationProps {
   setView: Dispatch<{ view: Views }>;
 }
 
 export const ChooseLocation: React.FC<ChooseLocationProps> = ({ setView }) => {
+  const { chooseLocation } = i18nEN;
   const mapElement = useRef<any>();
   const skateParksListRef = useRef<any>();
   const skateParkItemsRef = useRef<any[]>([]);
 
-  const [mapLatitude, _setMapLatitude] = useState<any>(52.520008);
-  const [mapLongitude, _setMapLongitude] = useState<any>(13.404954);
-  const [mapZoom, _setMapZoom] = useState<any>(10);
+  const [mapLatitude, _setMapLatitude] = useState<number>(52.520008);
+  const [mapLongitude, _setMapLongitude] = useState<number>(13.404954);
+  const [mapZoom, _setMapZoom] = useState<number>(10);
   const [map, setMap] = useState<any>();
   const [skateParks, _setSkateParks] = useState<SkateLocationData[]>(apiData);
   const [selectedTab, setSelectedTab] = useState(0);
@@ -82,9 +82,11 @@ export const ChooseLocation: React.FC<ChooseLocationProps> = ({ setView }) => {
     if (map) {
       createMarkers();
 
-      const userDecision = sessionStorage.getItem('bookSkateLesson');
-      const parsedUserDecision = userDecision && JSON.parse(decodeURIComponent(userDecision));
-      if (parsedUserDecision) setSelectedSkatePark({ id: parsedUserDecision.id, source: 'marker' });
+      const userDecision = getItemFromSessionStorage('bookSkateLesson');
+      const parsedUserDecision: UserDecision =
+        userDecision && JSON.parse(decodeURIComponent(userDecision));
+      if (parsedUserDecision && parsedUserDecision.skatePark.id)
+        setSelectedSkatePark({ id: parsedUserDecision.skatePark.id, source: 'marker' });
     }
   }, [map]);
 
@@ -218,16 +220,25 @@ export const ChooseLocation: React.FC<ChooseLocationProps> = ({ setView }) => {
     const selectedSkateParkSourceData = skateParks.find(
       (item) => item.id === selectedSkatePark?.id
     );
-    const selectedSkateParkStoreData = {
-      id: selectedSkateParkSourceData?.id,
-      name: selectedSkateParkSourceData?.name,
-      addressLine1: selectedSkateParkSourceData?.addressLine1,
-      addressLine2: selectedSkateParkSourceData?.addressLine2
+    const newUserDecision: UserDecision = {
+      skatePark: {
+        id: selectedSkateParkSourceData?.id,
+        name: selectedSkateParkSourceData?.name,
+        addressLine1: selectedSkateParkSourceData?.addressLine1,
+        addressLine2: selectedSkateParkSourceData?.addressLine2
+      }
     };
-    if (selectedSkateParkSourceData) {
+
+    const userDecision = getItemFromSessionStorage('bookSkateLesson');
+    const parsedUserDecision: UserDecision =
+      userDecision && JSON.parse(decodeURIComponent(userDecision));
+    if (parsedUserDecision?.boardAndTimeslot) {
+      newUserDecision.boardAndTimeslot = parsedUserDecision?.boardAndTimeslot;
+    }
+    if (newUserDecision) {
       sessionStorage.setItem(
         'bookSkateLesson',
-        encodeURIComponent(JSON.stringify(selectedSkateParkStoreData))
+        encodeURIComponent(JSON.stringify(newUserDecision))
       );
       setView({ view: 'pick_skate_and_timeslot' });
     }
@@ -236,8 +247,8 @@ export const ChooseLocation: React.FC<ChooseLocationProps> = ({ setView }) => {
   return (
     <ChooseLocationContainer>
       <ChooseLocationHeader>
-        <h1>Book a skate lesson</h1>
-        <h3>Select a skate park location by clicking on a pin or selecting one from the list</h3>
+        <h1>{chooseLocation.headline}</h1>
+        <h3>{chooseLocation.subheadline}</h3>
       </ChooseLocationHeader>
       {!isDesktop ? (
         <ChooseLocationBodyMobile>
@@ -276,7 +287,7 @@ export const ChooseLocation: React.FC<ChooseLocationProps> = ({ setView }) => {
         onClick={() => handleSkateParkSubmit()}
         endIcon={<ArrowForward />}
       >
-        Confirm
+        {chooseLocation.buttonLabel}
       </Button>
     </ChooseLocationContainer>
   );

@@ -1,17 +1,7 @@
-import React, { useEffect, useState, useRef, useCallback, Dispatch } from 'react';
+import React, { useEffect, useState, Dispatch } from 'react';
 import ArrowBack from '@mui/icons-material/ArrowBack';
 import ArrowForward from '@mui/icons-material/ArrowForward';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import {
-  Radio,
-  RadioGroup,
-  FormControl,
-  FormControlLabel,
-  Button,
-  ButtonProps
-} from '@mui/material';
+import { Radio, Button } from '@mui/material';
 import { boards } from './boards';
 import { TimeslotPicker } from './TimeslotPicker';
 import {
@@ -25,45 +15,63 @@ import {
   RadioWrapper,
   BoardName,
   BoardImage,
-  DateTimeSelection,
   ButtonsWrapper
 } from './PickSkateAndTimeslot.styles';
-import { styled } from '@mui/material/styles';
-import dayjs from 'dayjs';
-import { SkateLocationData, Views } from '../types/common';
-
-// TODO specify any types
+import { Views, UserDecision, SkatePark, SelectedBoard, Timeslot } from '../types/common';
+import { i18nEN } from '../apiData/i18nEN';
+import { getItemFromSessionStorage } from '../utils/utils';
 
 interface PickSkateAndTimeslotProps {
-  setView: Dispatch<{ view: Views; props?: any }>;
+  setView: Dispatch<{ view: Views; props?: UserDecision }>;
 }
+// TODO split to smaller components
 
 export const PickSkateAndTimeslot: React.FC<PickSkateAndTimeslotProps> = ({ setView }) => {
-  const [selectedSkatePark, setSelectedSkatePark] = useState<any>();
-  const [selectedBoard, setSelectedBoard] = useState<any>();
-  const [selectedTimeslot, setSelectedTimeslot] = useState<{ date: any; time: any } | undefined>();
+  const { pickSkateAndTimeslot } = i18nEN;
+  const [selectedSkatePark, setSelectedSkatePark] = useState<SkatePark>();
+  const [selectedBoard, setSelectedBoard] = useState<SelectedBoard>();
+  const [selectedTimeslot, setSelectedTimeslot] = useState<Timeslot>();
 
   useEffect(() => {
-    const userDecision = sessionStorage.getItem('bookSkateLesson');
-    const parsedUserDecision = userDecision && JSON.parse(decodeURIComponent(userDecision));
-    if (parsedUserDecision) setSelectedSkatePark(parsedUserDecision);
+    const userDecision = getItemFromSessionStorage('bookSkateLesson');
+    const parsedUserDecision: UserDecision =
+      userDecision && JSON.parse(decodeURIComponent(userDecision));
+    if (parsedUserDecision) {
+      setSelectedSkatePark(parsedUserDecision.skatePark);
+      setSelectedBoard(parsedUserDecision?.boardAndTimeslot?.board);
+      setSelectedTimeslot({
+        date: parsedUserDecision?.boardAndTimeslot?.timeslot?.date,
+        time: parsedUserDecision?.boardAndTimeslot?.timeslot?.time
+      });
+    }
   }, []);
 
   const handleSubmit = () => {
-    sessionStorage.removeItem('bookSkateLesson');
-    // maybe pass props in structured way?
-    setView({
-      view: 'confirmation_page',
-      props: { selectedSkatePark, selectedBoard, selectedTimeslot }
-    });
+    const userDecision = getItemFromSessionStorage('bookSkateLesson');
+    const parsedUserDecision: UserDecision =
+      userDecision && JSON.parse(decodeURIComponent(userDecision));
+    const updatedUserDecision: UserDecision = {
+      skatePark: parsedUserDecision?.skatePark,
+      boardAndTimeslot: {
+        board: selectedBoard,
+        timeslot: selectedTimeslot
+      }
+    };
+    if (parsedUserDecision && selectedBoard && selectedTimeslot) {
+      sessionStorage.removeItem('bookSkateLesson');
+      setView({
+        view: 'confirmation_page',
+        props: updatedUserDecision
+      });
+    }
   };
 
   return (
     <PickSkateAndDateContainer>
-      <h3>Pick Board And Date</h3>
+      <h3>{pickSkateAndTimeslot.headline}</h3>
       {selectedSkatePark && (
         <SelectedSkatePark>
-          <p>Your selected skate park:</p>
+          <p>{pickSkateAndTimeslot.selectedSkateParkInfoLabel}</p>
           <SkateParkName>{selectedSkatePark.name}</SkateParkName>
           <SkateParkAddressWrapper>
             <AddressLine1>{selectedSkatePark.addressLine1}</AddressLine1>
@@ -72,7 +80,7 @@ export const PickSkateAndTimeslot: React.FC<PickSkateAndTimeslotProps> = ({ setV
         </SelectedSkatePark>
       )}
       <BoardSelection>
-        <p>Pick one from available boards:</p>
+        <p>{pickSkateAndTimeslot.pickBoardLabel}</p>
         {boards.map((board) => {
           return (
             <div key={board.id}>
@@ -87,7 +95,6 @@ export const PickSkateAndTimeslot: React.FC<PickSkateAndTimeslotProps> = ({ setV
                   name="skate-parks-radio-group"
                 />
                 <BoardName>{board.name}</BoardName>
-                {/* TODO change longboard picture without shadow below */}
                 <BoardImage
                   src={process.env.PUBLIC_URL + `/${board.name}.jpg`}
                   alt={`${board.name}_image`}
@@ -109,7 +116,7 @@ export const PickSkateAndTimeslot: React.FC<PickSkateAndTimeslotProps> = ({ setV
           onClick={() => setView({ view: 'choose_location' })}
           startIcon={<ArrowBack />}
         >
-          Back to skate park selection
+          {pickSkateAndTimeslot.forwardButtonLabel}
         </Button>
         <Button
           variant="contained"
@@ -117,7 +124,7 @@ export const PickSkateAndTimeslot: React.FC<PickSkateAndTimeslotProps> = ({ setV
           onClick={() => handleSubmit()}
           endIcon={<ArrowForward />}
         >
-          Submit
+          {pickSkateAndTimeslot.forwardButtonLabel}
         </Button>
       </ButtonsWrapper>
     </PickSkateAndDateContainer>

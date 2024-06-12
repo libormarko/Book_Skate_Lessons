@@ -1,3 +1,5 @@
+import { SelectedSkatePark } from '../types/common';
+
 export const scrollToTopOfPage = () => {
   window.scrollTo(0, 0);
 };
@@ -5,7 +7,7 @@ export const scrollToTopOfPage = () => {
 export const scrollSkateParkItemToTheTop = (
   skateParkItemsRef: any,
   skateParksListRef: any,
-  selectedSkatePark: any
+  selectedSkatePark: SelectedSkatePark
 ) => {
   const foundSkateParkItem = skateParkItemsRef.current.find(
     (elem: any) => elem.dataset.skateParkId === selectedSkatePark?.id
@@ -18,4 +20,8 @@ export const scrollSkateParkItemToTheTop = (
       behavior: 'smooth'
     });
   }
+};
+
+export const getItemFromSessionStorage = (itemName: string) => {
+  return sessionStorage.getItem(itemName);
 };

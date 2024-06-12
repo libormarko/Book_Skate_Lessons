@@ -1,28 +1,26 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { locationPins } from './locationPins';
 import tt from '@tomtom-international/web-sdk-maps';
 import { scrollSkateParkItemToTheTop } from '../utils/utils';
+import { SelectedSkatePark, SkateLocationData } from '../types/common';
 
 export const useMarkerAndSkateParkService = (
-  skateParks: any,
+  skateParks: SkateLocationData[],
   map: any,
   skateParkItemsRef: any,
   skateParksListRef: any
 ) => {
   const [markerRefs, setMarkerRefs] = useState<any>([]);
-  const [selectedSkatePark, setSelectedSkatePark] = useState<{
-    id: string;
-    source: 'marker' | 'listItem';
-  }>();
+  const [selectedSkatePark, setSelectedSkatePark] = useState<SelectedSkatePark>();
 
   const createMarker = (
     className: string,
     id: string,
-    innerHTML: any,
+    innerHTML: string,
     color: string,
     height: string,
     width: string,
-    latLong: any
+    latLong: { lat: number; lng: number }
   ) => {
     const divElem = document.createElement('div');
     divElem.className = className;
@@ -42,7 +40,7 @@ export const useMarkerAndSkateParkService = (
 
   const createMarkers = useCallback(() => {
     const markersArray: any = [];
-    skateParks.forEach((skatePark: any) => {
+    skateParks.forEach((skatePark) => {
       const divElem = document.createElement('div');
       divElem.className = 'marker';
       divElem.id = `marker_${skatePark.id}`;

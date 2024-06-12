@@ -3,16 +3,20 @@ import ChooseLocation from './ChooseLocation/ChooseLocation';
 import PickSkateAndTimeslot from './PickSkateAndTimeslot/PickSkateAndTimeslot';
 import ConfirmationPage from './ConfirmationPage/ConfirmationPage';
 import { AppContainer } from './App.styles';
+import { UserDecision } from './types/common';
+import { getItemFromSessionStorage } from './utils/utils';
 
-// TODO specify any types
-
-export const App: React.FC<any> = () => {
-  const [view, setView] = useState<{ view: string; props?: any }>();
+// TODO read through the whole logic and simplify (map, forEach)
+export const App: React.FC = () => {
+  const [view, setView] = useState<{ view: string; props?: UserDecision | undefined }>();
 
   useEffect(() => {
-    const userDecision = sessionStorage.getItem('bookSkateLesson');
-    const decodedUserDecision = userDecision && decodeURIComponent(userDecision);
-    if (decodedUserDecision) {
+    const userDecision = getItemFromSessionStorage('bookSkateLesson');
+    const parsedUserDecision: UserDecision =
+      userDecision && JSON.parse(decodeURIComponent(userDecision));
+    if (parsedUserDecision?.boardAndTimeslot) {
+      setView({ view: 'add_your_details' });
+    } else if (parsedUserDecision?.skatePark) {
       setView({ view: 'pick_skate_and_timeslot' });
     } else {
       setView({ view: 'choose_location' });

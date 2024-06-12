@@ -1,38 +1,13 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
-import ArrowBack from '@mui/icons-material/ArrowBack';
-import ArrowForward from '@mui/icons-material/ArrowForward';
+import React, { useEffect, useState } from 'react';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import {
-  Radio,
-  RadioGroup,
-  FormControl,
-  FormControlLabel,
-  Button,
-  ButtonProps
-} from '@mui/material';
-import { boards } from './boards';
-import {
-  PickSkateAndDateContainer,
-  SelectedSkatePark,
-  SkateParkName,
-  SkateParkAddressWrapper,
-  AddressLine1,
-  AddressLine2,
-  BoardSelection,
-  RadioWrapper,
-  BoardName,
-  BoardImage,
-  TimeslotPickerContainer,
-  DateTimeSelection,
-  ButtonsWrapper
-} from './PickSkateAndTimeslot.styles';
+import { Button } from '@mui/material';
+import { TimeslotPickerContainer, DateTimeSelection } from './PickSkateAndTimeslot.styles';
 import { styled } from '@mui/material/styles';
 import dayjs from 'dayjs';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import { useAvailableTimeslots } from '../hooks/useAvailableTimeslots';
-import { time } from 'console';
 
 export const TimeslotButton = styled(Button)<any>(({ selected }) => ({
   backgroundColor: selected ? 'black' : 'white',
@@ -47,10 +22,13 @@ export const TimeslotButton = styled(Button)<any>(({ selected }) => ({
 
 interface TimeslotPickerProps {
   selectedTimeslot: any;
-  setSelectedTimeslot: (value: string) => void;
+  setSelectedTimeslot: (value: any) => void;
 }
 
-export const TimeslotPicker: React.FC<any> = ({ selectedTimeslot, setSelectedTimeslot }) => {
+export const TimeslotPicker: React.FC<TimeslotPickerProps> = ({
+  selectedTimeslot,
+  setSelectedTimeslot
+}) => {
   const [availableTimeslots, setAvailableTimeslots] = useState<any[] | undefined>(undefined);
 
   const findAvailableTimeslots = useAvailableTimeslots();
@@ -71,7 +49,7 @@ export const TimeslotPicker: React.FC<any> = ({ selectedTimeslot, setSelectedTim
   }, [selectedTimeslot]);
 
   const handleDatePick = (date: any) => {
-    setSelectedTimeslot({ date: date?.format('YYYY-MM-DD'), time: null });
+    setSelectedTimeslot({ date: date?.format('YYYY-MM-DD'), time: undefined });
   };
 
   return (
@@ -80,6 +58,7 @@ export const TimeslotPicker: React.FC<any> = ({ selectedTimeslot, setSelectedTim
         <p>Pick from available dates and time:</p>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker
+            defaultValue={selectedTimeslot.date && dayjs(selectedTimeslot?.date)}
             disablePast
             maxDate={dayjs('2024-12-31')}
             onChange={(value) => handleDatePick(value)}

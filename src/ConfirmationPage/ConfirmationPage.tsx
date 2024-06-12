@@ -1,35 +1,47 @@
-import React, { useEffect, useState, useRef, useCallback } from 'react';
+import React from 'react';
 import { ConfirmationContainer } from './ConfirmationPage.styles';
-
-// TODO specify any types
+import { Button } from '@mui/material';
+import ArrowForward from '@mui/icons-material/ArrowForward';
+import { i18nEN } from '../apiData/i18nEN';
+import { UserDecision } from '../types/common';
 
 interface ConfirmationPageProps {
-  userDecision: any;
+  userDecision: UserDecision | undefined;
 }
 
-export const ConfirmationPage: React.FC<any> = ({ userDecision }) => {
+export const ConfirmationPage: React.FC<ConfirmationPageProps> = ({ userDecision }) => {
+  const { confirmationPage } = i18nEN;
+
   return (
     <ConfirmationContainer>
-      <h2>Congratulations, we look forward to teach you skate soon!</h2>
-      {/* TODO add different picture based on selected board */}
+      <h2>{confirmationPage.headline}</h2>
       <img
         src={process.env.PUBLIC_URL + `/Confirmation.jpg`}
         alt={`confirmation_skate_photo`}
         style={{ maxHeight: '400px', maxWidth: '90vw' }}
       />
-      <p>Details of your booking:</p>
+      <p>{confirmationPage.detailsHeadline}</p>
       <br />
-      <strong>Selected skatepark</strong>
-      <p>{userDecision.selectedSkatePark.name}</p>
-      <p>{userDecision.selectedSkatePark.addressLine1}</p>
-      <p>{userDecision.selectedSkatePark.addressLine2}</p>
+      <strong>{confirmationPage.selectedSkateParkLabel}</strong>
+      <p>{userDecision?.skatePark.name}</p>
+      <p>{userDecision?.skatePark.addressLine1}</p>
+      <p>{userDecision?.skatePark.addressLine2}</p>
       <br />
-      <strong>Selected board</strong>
-      <p>{userDecision.selectedBoard}</p>
+      <strong>{confirmationPage.selectedBoardLabel}</strong>
+      <p>{userDecision?.boardAndTimeslot?.board}</p>
       <br />
-      <strong>Selected date and time</strong>
-      <p>{userDecision.selectedTimeslot.date}</p>
-      <p>{userDecision.selectedTimeslot.time}</p>
+      <strong>{confirmationPage.selectedDateAndTimeLabel}</strong>
+      <p>{userDecision?.boardAndTimeslot?.timeslot?.date}</p>
+      <p>{userDecision?.boardAndTimeslot?.timeslot?.time}</p>
+
+      <Button
+        color="primary"
+        variant="contained"
+        endIcon={<ArrowForward />}
+        href="mailto: name@gmail.com"
+      >
+        {confirmationPage.buttonLabel}
+      </Button>
     </ConfirmationContainer>
   );
 };
