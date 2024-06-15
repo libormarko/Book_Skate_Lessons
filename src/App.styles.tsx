@@ -3,8 +3,9 @@ import * as variables from './variables';
 
 export const AppContainer = styled.div`
   width: 100vw;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: ${variables.spacingXXL} 0;
 `;

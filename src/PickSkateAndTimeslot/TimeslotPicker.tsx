@@ -3,25 +3,20 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Button } from '@mui/material';
-import { TimeslotPickerContainer, DateTimeSelection } from './PickSkateAndTimeslot.styles';
-import { styled } from '@mui/material/styles';
+import {
+  TimeslotPickerContainer,
+  DateTimeSelection,
+  DatePickerContainer,
+  TimeslotsContainer,
+  TimeslotButton
+} from './PickSkateAndTimeslot.styles';
 import dayjs from 'dayjs';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import { useAvailableTimeslots } from '../hooks/useAvailableTimeslots';
-
-export const TimeslotButton = styled(Button)<any>(({ selected }) => ({
-  backgroundColor: selected ? 'black' : 'white',
-  borderRadius: '20px',
-  color: selected ? 'white' : 'black',
-  '&:hover': {
-    backgroundColor: selected ? 'black' : 'lightgrey'
-  }
-}));
-
-// TODO specify any types
+import { Timeslot } from '../types/common';
 
 interface TimeslotPickerProps {
-  selectedTimeslot: any;
+  selectedTimeslot: Timeslot | undefined;
   setSelectedTimeslot: (value: any) => void;
 }
 
@@ -57,30 +52,34 @@ export const TimeslotPicker: React.FC<TimeslotPickerProps> = ({
       <DateTimeSelection>
         <p>Pick from available dates and time:</p>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
-          <DatePicker
-            defaultValue={selectedTimeslot.date && dayjs(selectedTimeslot?.date)}
-            disablePast
-            maxDate={dayjs('2024-12-31')}
-            onChange={(value) => handleDatePick(value)}
-          />
+          <DatePickerContainer>
+            <DatePicker
+              defaultValue={(selectedTimeslot?.date && dayjs(selectedTimeslot?.date)) || null}
+              disablePast
+              maxDate={dayjs('2024-12-31')}
+              onChange={(value) => handleDatePick(value)}
+            />
+          </DatePickerContainer>
         </LocalizationProvider>
       </DateTimeSelection>
-      {selectedTimeslot?.date && availableTimeslots && availableTimeslots.length === 0
-        ? 'No available spots, pick a different date'
-        : availableTimeslots?.map((timeslot) => {
-            return (
-              <TimeslotButton
-                key={timeslot}
-                selected={timeslot === selectedTimeslot?.time}
-                variant="contained"
-                onClick={() =>
-                  setSelectedTimeslot((prevState: any) => ({ ...prevState, time: timeslot }))
-                }
-              >
-                {timeslot}
-              </TimeslotButton>
-            );
-          })}
+      <TimeslotsContainer>
+        {selectedTimeslot?.date && availableTimeslots && availableTimeslots.length === 0
+          ? 'No available spots, pick a different date'
+          : availableTimeslots?.map((timeslot) => {
+              return (
+                <TimeslotButton
+                  key={timeslot}
+                  selected={timeslot === selectedTimeslot?.time}
+                  variant="contained"
+                  onClick={() =>
+                    setSelectedTimeslot((prevState: any) => ({ ...prevState, time: timeslot }))
+                  }
+                >
+                  {timeslot}
+                </TimeslotButton>
+              );
+            })}
+      </TimeslotsContainer>
     </TimeslotPickerContainer>
   );
 };

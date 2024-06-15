@@ -59,7 +59,6 @@ export const useMarkerAndSkateParkService = (
       markersArray.push({ ref: marker, id: skatePark.id });
 
       const markerElement = marker.getElement();
-      // markerElement.style.cursor = 'pointer';
       markerElement.addEventListener('click', () => {
         setSelectedSkatePark({ id: skatePark.id, source: 'marker' });
       });
@@ -115,7 +114,7 @@ export const useMarkerAndSkateParkService = (
           setSelectedSkatePark({ id: previouslySelectedMarker.id, source: 'marker' });
         });
 
-        // update markers ref to contain current selected / not selected status
+        // update markers ref to contain current selected || not selected status
         setMarkerRefs(
           markerRefs.map((item: any) => {
             return item.id === selectedSkatePark.id

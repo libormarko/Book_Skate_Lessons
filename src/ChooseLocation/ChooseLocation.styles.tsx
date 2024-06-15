@@ -73,7 +73,7 @@ export const Map = styled.div`
   }
 `;
 
-export const SkateParks = styled.div``;
+export const SkateParksContainer = styled.div``;
 
 export const SkateParksList = styled.div`
   display: flex;

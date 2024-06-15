@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Button } from '@mui/material';
 import * as variables from '../variables';
 
 export const PickSkateAndDateContainer = styled.div`
@@ -13,6 +14,12 @@ export const SelectedSkatePark = styled.div`
   text-align: left;
   margin: ${variables.spacingL} 0;
 `;
+
+export const Headline = styled.h3`
+  margin-top: 0;
+`;
+
+export const SelectedSkateParkInfoLabel = styled.h4``;
 
 export const SkateParkName = styled.div`
   margin: 0;
@@ -54,6 +61,15 @@ export const BoardImage = styled.img`
 
 export const TimeslotPickerContainer = styled.div``;
 
+export const DatePickerContainer = styled.div`
+  margin-left: ${variables.spacingM};
+`;
+
+export const TimeslotsContainer = styled.div`
+  margin-top: ${variables.spacingS};
+  margin-left: ${variables.spacingM};
+`;
+
 export const DateTimeSelection = styled.div``;
 
 export const ButtonsWrapper = styled.div`
@@ -61,4 +77,14 @@ export const ButtonsWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+`;
+
+export const TimeslotButton = styled((props) => <Button {...props} />)`
+  background-color: ${(props) => (props.selected ? 'black' : 'white')}!important;
+  border-radius: 20px !important;
+  color: ${(props) => (props.selected ? 'white' : 'black')}!important;
+  margin-right: ${variables.spacingXS} !important;
+  &:hover: {
+    background-color: ${(props) => (props.selected ? 'black' : 'lightgrey')}!important;
+  }
 `;

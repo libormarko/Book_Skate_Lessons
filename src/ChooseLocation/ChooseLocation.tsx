@@ -5,28 +5,12 @@ import {
   ChooseLocationContainer,
   ChooseLocationHeader,
   ChooseLocationBodyMobile,
-  ChooseLocationBodyDesktop,
-  MapContainer,
-  Map,
-  SkateParks,
-  SkateParksList,
-  SelectedSkateParkItem,
-  RadioText,
-  SkateParkName,
-  SkateParkAddressWrapper,
-  Address,
-  AddressLine1,
-  AddressLine2,
-  SkateParkFeaturesWrapper,
-  Features
+  ChooseLocationBodyDesktop
 } from './ChooseLocation.styles';
 import { apiData } from '../apiData/skateLocations';
 import { SkateLocationData, UserDecision, Views } from '../types/common';
-import { Radio, RadioGroup, FormControl, Button, Box, Tabs, Tab } from '@mui/material';
+import { Button, Box, Tabs, Tab } from '@mui/material';
 import ArrowForward from '@mui/icons-material/ArrowForward';
-import { Sheet } from '@mui/joy';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faMapLocationDot, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
 import * as variables from '../variables';
 import { useDesktopOrMobileView } from '../hooks/useDesktopOrMobileView';
 import { useMarkerAndSkateParkService } from './useMarkerAndSkateParkService';
@@ -34,8 +18,8 @@ import { scrollSkateParkItemToTheTop } from '../utils/utils';
 import { TabPanel } from '../TabPanel/TabPanel';
 import { i18nEN } from '../apiData/i18nEN';
 import { getItemFromSessionStorage } from '../utils/utils';
-
-// TODO split component to smaller ones: Map, SkateParkList, SkateParkListItem
+import { MapComponent } from './Map';
+import { SkateParks } from './SkateParks';
 
 interface ChooseLocationProps {
   setView: Dispatch<{ view: Views }>;
@@ -101,118 +85,24 @@ export const ChooseLocation: React.FC<ChooseLocationProps> = ({ setView }) => {
   }, [selectedTab]);
 
   const renderMapComponent = () => {
-    const selectedSkateparkObj = skateParks.find((item) => item.id == selectedSkatePark?.id);
     return (
-      <MapContainer>
-        <Map ref={mapElement} className="mapDiv" />
-        {!isDesktop && selectedSkateparkObj && (
-          <SelectedSkateParkItem>
-            <Sheet
-              component="label"
-              variant="outlined"
-              sx={{
-                p: 1,
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'left',
-                boxShadow: 'sm',
-                borderRadius: 'md'
-              }}
-            >
-              <Radio checked />
-              <RadioText>
-                <SkateParkName>{selectedSkateparkObj.name}</SkateParkName>
-                <SkateParkAddressWrapper>
-                  <FontAwesomeIcon icon={faMapLocationDot} />
-                  <Address>
-                    <AddressLine1>{selectedSkateparkObj.addressLine1}</AddressLine1>
-                    <AddressLine2>{selectedSkateparkObj.addressLine2}</AddressLine2>
-                  </Address>
-                </SkateParkAddressWrapper>
-                <SkateParkFeaturesWrapper>
-                  <FontAwesomeIcon icon={faCircleInfo} />
-                  <Features>
-                    {selectedSkateparkObj.features.map((feature, featureIndex) => {
-                      return (
-                        <span key={featureIndex}>
-                          {feature}{' '}
-                          {featureIndex === selectedSkateparkObj.features.length - 1 ? '' : ', '}{' '}
-                        </span>
-                      );
-                    })}
-                  </Features>
-                </SkateParkFeaturesWrapper>
-              </RadioText>
-            </Sheet>
-          </SelectedSkateParkItem>
-        )}
-      </MapContainer>
+      <MapComponent
+        mapElement={mapElement}
+        skateParks={skateParks}
+        selectedSkatePark={selectedSkatePark}
+      />
     );
   };
 
   const renderSkateParks = () => {
     return (
-      <SkateParks>
-        <FormControl fullWidth>
-          <SkateParksList ref={skateParksListRef}>
-            <RadioGroup
-              name="radio-buttons-skate-parks-group"
-              value={selectedSkatePark?.id || 'default'}
-              onChange={(e) => {
-                e.preventDefault();
-                setSelectedSkatePark({ id: e.target.value, source: 'listItem' });
-              }}
-            >
-              {skateParks.map((skatePark, index) => {
-                return (
-                  <Sheet
-                    key={skatePark.id}
-                    ref={(element: any) => skateParkItemsRef.current.splice(index, 1, element)}
-                    data-skate-park-id={skatePark.id}
-                    component="label"
-                    variant="outlined"
-                    sx={{
-                      p: 1,
-                      display: 'flex',
-                      flexDirection: 'row',
-                      alignItems: 'center',
-                      justifyContent: 'left',
-                      boxShadow: 'sm',
-                      borderRadius: 'md'
-                    }}
-                  >
-                    <Radio value={skatePark.id} />
-                    <RadioText>
-                      <SkateParkName>{skatePark.name}</SkateParkName>
-                      <SkateParkAddressWrapper>
-                        <FontAwesomeIcon icon={faMapLocationDot} />
-                        <Address>
-                          <AddressLine1>{skatePark.addressLine1}</AddressLine1>
-                          <AddressLine2>{skatePark.addressLine2}</AddressLine2>
-                        </Address>
-                      </SkateParkAddressWrapper>
-                      <SkateParkFeaturesWrapper>
-                        <FontAwesomeIcon icon={faCircleInfo} />
-                        <Features>
-                          {skatePark.features.map((feature, featureIndex) => {
-                            return (
-                              <span key={featureIndex}>
-                                {feature}{' '}
-                                {featureIndex === skatePark.features.length - 1 ? '' : ', '}{' '}
-                              </span>
-                            );
-                          })}
-                        </Features>
-                      </SkateParkFeaturesWrapper>
-                    </RadioText>
-                  </Sheet>
-                );
-              })}
-            </RadioGroup>
-          </SkateParksList>
-        </FormControl>
-      </SkateParks>
+      <SkateParks
+        skateParksListRef={skateParksListRef}
+        skateParkItemsRef={skateParkItemsRef}
+        skateParks={skateParks}
+        selectedSkatePark={selectedSkatePark}
+        setSelectedSkatePark={setSelectedSkatePark}
+      />
     );
   };
 

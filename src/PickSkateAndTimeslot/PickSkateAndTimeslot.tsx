@@ -15,7 +15,9 @@ import {
   RadioWrapper,
   BoardName,
   BoardImage,
-  ButtonsWrapper
+  ButtonsWrapper,
+  SelectedSkateParkInfoLabel,
+  Headline
 } from './PickSkateAndTimeslot.styles';
 import { Views, UserDecision, SkatePark, SelectedBoard, Timeslot } from '../types/common';
 import { i18nEN } from '../apiData/i18nEN';
@@ -24,7 +26,6 @@ import { getItemFromSessionStorage } from '../utils/utils';
 interface PickSkateAndTimeslotProps {
   setView: Dispatch<{ view: Views; props?: UserDecision }>;
 }
-// TODO split to smaller components
 
 export const PickSkateAndTimeslot: React.FC<PickSkateAndTimeslotProps> = ({ setView }) => {
   const { pickSkateAndTimeslot } = i18nEN;
@@ -60,7 +61,7 @@ export const PickSkateAndTimeslot: React.FC<PickSkateAndTimeslotProps> = ({ setV
     if (parsedUserDecision && selectedBoard && selectedTimeslot) {
       sessionStorage.removeItem('bookSkateLesson');
       setView({
-        view: 'confirmation_page',
+        view: 'summary_page',
         props: updatedUserDecision
       });
     }
@@ -68,10 +69,12 @@ export const PickSkateAndTimeslot: React.FC<PickSkateAndTimeslotProps> = ({ setV
 
   return (
     <PickSkateAndDateContainer>
-      <h3>{pickSkateAndTimeslot.headline}</h3>
+      <Headline>{pickSkateAndTimeslot.headline}</Headline>
       {selectedSkatePark && (
         <SelectedSkatePark>
-          <p>{pickSkateAndTimeslot.selectedSkateParkInfoLabel}</p>
+          <SelectedSkateParkInfoLabel>
+            {pickSkateAndTimeslot.selectedSkateParkInfoLabel}
+          </SelectedSkateParkInfoLabel>
           <SkateParkName>{selectedSkatePark.name}</SkateParkName>
           <SkateParkAddressWrapper>
             <AddressLine1>{selectedSkatePark.addressLine1}</AddressLine1>

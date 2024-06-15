@@ -11,12 +11,13 @@ export const i18nEN = {
     backButtonLabel: 'Back to skate park selection',
     forwardButtonLabel: 'Forward to the next step'
   },
-  confirmationPage: {
+  summaryPage: {
     headline: 'Congratulations, we look forward to teach you skate soon!',
     detailsHeadline: 'Details of your booking:',
     selectedSkateParkLabel: 'Selected skatepark',
     selectedBoardLabel: 'Selected board',
     selectedDateAndTimeLabel: 'Selected date and time',
-    buttonLabel: 'Send me an email with your booking details'
+    footerLabel: 'Contact me by email with your booking details',
+    buttonLabel: 'Send email'
   }
 };
