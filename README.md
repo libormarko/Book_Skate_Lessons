@@ -20,4 +20,4 @@ This is a page to showcase booking a skate lesson case. I built it with newest u
 
 ## Screenshot of the webpage
 
-TBC
+![Screenshot of the webpage](./screenshot.png)
