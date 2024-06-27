@@ -7,5 +7,5 @@ export const AppContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  margin: ${variables.spacingXXL} 0;
+  margin: 0;
 `;

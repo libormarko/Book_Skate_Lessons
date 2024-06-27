@@ -44,9 +44,7 @@ export const MapComponent: React.FC<MapProps> = ({ mapElement, skateParks, selec
               display: 'flex',
               flexDirection: 'row',
               alignItems: 'center',
-              justifyContent: 'left',
-              boxShadow: 'sm',
-              borderRadius: 'md'
+              justifyContent: 'left'
             }}
           >
             <Radio checked />

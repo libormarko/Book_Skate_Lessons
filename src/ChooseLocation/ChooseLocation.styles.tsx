@@ -14,17 +14,19 @@ export const ChooseLocationHeader = styled.div`
 
 export const ChooseLocationBodyDesktop = styled.div`
   display: none;
+  border: 1px solid lightgrey;
+  border-radius: 5px;
 
   @media (min-width: ${variables.breakpointM}px) {
     display: flex;
-    margin: ${variables.spacingM} 0;
+    margin: 0 0 ${variables.spacingM} 0;
   }
 `;
 
 export const ChooseLocationBodyMobile = styled.div`
   margin: ${variables.spacingM} 0;
 
-  @media (min-width: ${variables.breakpointM}px) {
+  @media (min-width: ${variables.breakpointL}px) {
     display: none;
   }
 
@@ -73,7 +75,15 @@ export const Map = styled.div`
   }
 `;
 
-export const SkateParksContainer = styled.div``;
+export const SkateParksContainer = styled.div`
+  @media (min-width: ${variables.breakpointM}px) {
+    width: 500px;
+  }
+
+  @media (min-width: ${variables.breakpointL}px) {
+    width: unset;
+  }
+`;
 
 export const SkateParksList = styled.div`
   display: flex;

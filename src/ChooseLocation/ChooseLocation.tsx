@@ -138,18 +138,22 @@ export const ChooseLocation: React.FC<ChooseLocationProps> = ({ setView }) => {
     <ChooseLocationContainer>
       <ChooseLocationHeader>
         <h1>{chooseLocation.headline}</h1>
-        <h3>{chooseLocation.subheadline}</h3>
+        <p>{chooseLocation.subheadline}</p>
       </ChooseLocationHeader>
       {!isDesktop ? (
         <ChooseLocationBodyMobile>
-          <Box>
+          <Box
+            sx={{
+              borderBottom: 1,
+              borderColor: 'divider'
+            }}
+          >
             <Box
               sx={{
                 borderBottom: 1,
                 borderColor: 'divider',
                 display: 'flex',
-                justifyContent: 'center',
-                marginBottom: variables.spacingS
+                justifyContent: 'center'
               }}
             >
               <Tabs value={selectedTab} onChange={handleTabChange}>

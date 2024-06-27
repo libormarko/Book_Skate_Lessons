@@ -14,6 +14,7 @@ import dayjs from 'dayjs';
 import updateLocale from 'dayjs/plugin/updateLocale';
 import { useAvailableTimeslots } from '../hooks/useAvailableTimeslots';
 import { Timeslot } from '../types/common';
+import { i18nEN } from '../apiData/i18nEN';
 
 interface TimeslotPickerProps {
   selectedTimeslot: Timeslot | undefined;
@@ -24,6 +25,7 @@ export const TimeslotPicker: React.FC<TimeslotPickerProps> = ({
   selectedTimeslot,
   setSelectedTimeslot
 }) => {
+  const { pickSkateAndTimeslot } = i18nEN;
   const [availableTimeslots, setAvailableTimeslots] = useState<any[] | undefined>(undefined);
 
   const findAvailableTimeslots = useAvailableTimeslots();
@@ -50,7 +52,7 @@ export const TimeslotPicker: React.FC<TimeslotPickerProps> = ({
   return (
     <TimeslotPickerContainer>
       <DateTimeSelection>
-        <p>Pick from available dates and time:</p>
+        <p>{pickSkateAndTimeslot.pickDateTimeslotLabel}</p>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePickerContainer>
             <DatePicker
@@ -64,7 +66,7 @@ export const TimeslotPicker: React.FC<TimeslotPickerProps> = ({
       </DateTimeSelection>
       <TimeslotsContainer>
         {selectedTimeslot?.date && availableTimeslots && availableTimeslots.length === 0
-          ? 'No available spots, pick a different date'
+          ? pickSkateAndTimeslot.noAvailableTimeslotsLabel
           : availableTimeslots?.map((timeslot) => {
               return (
                 <TimeslotButton

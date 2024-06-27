@@ -1,5 +1,10 @@
 import React from 'react';
-import { SummaryContainer, SummaryFooter } from './SummaryPage.styles';
+import {
+  SummaryContainer,
+  SummaryFooter,
+  StyledImage,
+  BookingDetailsHeadline
+} from './SummaryPage.styles';
 import { Button } from '@mui/material';
 import ArrowForward from '@mui/icons-material/ArrowForward';
 import { i18nEN } from '../apiData/i18nEN';
@@ -14,14 +19,9 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({ userDecision }) => {
 
   return (
     <SummaryContainer>
-      <h2>{summaryPage.headline}</h2>
-      <img
-        src={process.env.PUBLIC_URL + `/Summary.jpg`}
-        alt={`summary_skate_photo`}
-        style={{ maxHeight: '400px', maxWidth: '90vw' }}
-      />
-      <p>{summaryPage.detailsHeadline}</p>
-      <br />
+      <h1>{summaryPage.headline}</h1>
+      <StyledImage src={process.env.PUBLIC_URL + `/Summary.jpg`} alt={`summary_skate_photo`} />
+      <BookingDetailsHeadline>{summaryPage.detailsHeadline}</BookingDetailsHeadline>
       <strong>{summaryPage.selectedSkateParkLabel}</strong>
       <p>{userDecision?.skatePark.name}</p>
       <p>{userDecision?.skatePark.addressLine1}</p>
@@ -40,7 +40,7 @@ export const SummaryPage: React.FC<SummaryPageProps> = ({ userDecision }) => {
           color="primary"
           variant="contained"
           endIcon={<ArrowForward />}
-          href="mailto: name@gmail.com"
+          href="mailto: marko.libor@gmail.com"
         >
           {summaryPage.buttonLabel}
         </Button>

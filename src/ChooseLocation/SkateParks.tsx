@@ -58,9 +58,7 @@ export const SkateParks: React.FC<SkateParksProps> = ({
                     display: 'flex',
                     flexDirection: 'row',
                     alignItems: 'center',
-                    justifyContent: 'left',
-                    boxShadow: 'sm',
-                    borderRadius: 'md'
+                    justifyContent: 'left'
                   }}
                 >
                   <Radio value={skatePark.id} />

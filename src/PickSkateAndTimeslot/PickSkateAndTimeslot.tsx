@@ -119,7 +119,7 @@ export const PickSkateAndTimeslot: React.FC<PickSkateAndTimeslotProps> = ({ setV
           onClick={() => setView({ view: 'choose_location' })}
           startIcon={<ArrowBack />}
         >
-          {pickSkateAndTimeslot.forwardButtonLabel}
+          {pickSkateAndTimeslot.backButtonLabel}
         </Button>
         <Button
           variant="contained"

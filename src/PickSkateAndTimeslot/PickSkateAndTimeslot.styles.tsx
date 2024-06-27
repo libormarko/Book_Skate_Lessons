@@ -15,11 +15,14 @@ export const SelectedSkatePark = styled.div`
   margin: ${variables.spacingL} 0;
 `;
 
-export const Headline = styled.h3`
+export const Headline = styled.h1`
   margin-top: 0;
 `;
 
-export const SelectedSkateParkInfoLabel = styled.h4``;
+export const SelectedSkateParkInfoLabel = styled.h4`
+  margin-top: 0;
+  margin-bottom: ${variables.spacingXS};
+`;
 
 export const SkateParkName = styled.div`
   margin: 0;
@@ -39,7 +42,7 @@ export const AddressLine2 = styled.p`
 `;
 
 export const BoardSelection = styled.div`
-  margin: ${variables.spacingM} 0;
+  margin: 0 0 ${variables.spacingM} 0;
   text-align: left;
 `;
 
@@ -68,6 +71,12 @@ export const DatePickerContainer = styled.div`
 export const TimeslotsContainer = styled.div`
   margin-top: ${variables.spacingS};
   margin-left: ${variables.spacingM};
+  display: grid;
+  grid-template-columns: max-content max-content;
+
+  button:nth-child(3) {
+    margin-top: ${variables.spacingS};
+  }
 `;
 
 export const DateTimeSelection = styled.div``;
@@ -77,6 +86,11 @@ export const ButtonsWrapper = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  margin-top: ${variables.spacingS};
+
+  button:first-child {
+    margin-bottom: ${variables.spacingXS};
+  }
 `;
 
 export const TimeslotButton = styled((props) => <Button {...props} />)`
