@@ -10,6 +10,9 @@ This is a page to showcase booking a skate lesson case. I built it with newest u
 - React
 - TypeScript
 - Styled components
+- MUI component library
+- Swiper slider library
+- TomTom maps library
 
 ## Setup and Run
 
