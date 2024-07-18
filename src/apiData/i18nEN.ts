@@ -5,7 +5,7 @@ export const i18nEN = {
     buttonLabel: 'Confirm'
   },
   pickSkateAndTimeslot: {
-    headline: 'Pick Board And Date',
+    headline: 'Pick a board and date',
     selectedSkateParkInfoLabel: 'Your selected skate park:',
     pickBoardLabel: 'Pick one from available boards:',
     pickDateTimeslotLabel: 'Pick from available dates and timeslots:',
@@ -19,7 +19,8 @@ export const i18nEN = {
     selectedSkateParkLabel: 'Selected skatepark',
     selectedBoardLabel: 'Selected board',
     selectedDateAndTimeLabel: 'Selected date and time',
-    footerLabel: 'If you are looking for an experienced Senior Frontend Engineer, get in touch!',
+    footerLabel:
+      '*This is MVP project use case. If you like what I did here and are looking for a senior frontend dev, get in touch!',
     buttonLabel: 'Send email'
   }
 };

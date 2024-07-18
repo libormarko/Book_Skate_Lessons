@@ -1,6 +1,6 @@
 # Book Skate Lessons
 
-This is a page to showcase booking a skate lesson case. I built it with newest up to date frontend technologies and principles.
+This is a MVP use case project to book a skate lesson. I built it with newest up to date frontend technologies and principles.
 
 ## Technologies used
 
@@ -11,7 +11,6 @@ This is a page to showcase booking a skate lesson case. I built it with newest u
 - TypeScript
 - Styled components
 - MUI component library
-- Swiper slider library
 - TomTom maps library
 
 ## Setup and Run
