@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import { Button } from '@mui/material';
-import * as variables from '../variables';
+import * as variables from '../../variables';
 
 export const PickSkateAndDateContainer = styled.div`
   display: flex;

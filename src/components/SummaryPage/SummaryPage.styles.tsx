@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import * as variables from '../variables';
+import * as variables from '../../variables';
 
 export const SummaryContainer = styled.div`
   margin: 0 ${variables.spacingL};

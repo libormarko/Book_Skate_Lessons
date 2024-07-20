@@ -12,9 +12,9 @@ import {
 } from './PickSkateAndTimeslot.styles';
 import dayjs from 'dayjs';
 import updateLocale from 'dayjs/plugin/updateLocale';
-import { useAvailableTimeslots } from '../hooks/useAvailableTimeslots';
-import { Timeslot } from '../types/common';
-import { i18nEN } from '../apiData/i18nEN';
+import { useAvailableTimeslots } from '../../hooks/useAvailableTimeslots';
+import { Timeslot } from '../../types/common';
+import { i18nEN } from '../../apiData/i18nEN';
 
 interface TimeslotPickerProps {
   selectedTimeslot: Timeslot | undefined;

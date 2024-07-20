@@ -19,9 +19,9 @@ import {
   SelectedSkateParkInfoLabel,
   Headline
 } from './PickSkateAndTimeslot.styles';
-import { Views, UserDecision, SkatePark, SelectedBoard, Timeslot } from '../types/common';
-import { i18nEN } from '../apiData/i18nEN';
-import { getItemFromSessionStorage } from '../utils/utils';
+import { Views, UserDecision, SkatePark, SelectedBoard, Timeslot } from '../../types/common';
+import { i18nEN } from '../../apiData/i18nEN';
+import { getItemFromSessionStorage } from '../../utils/utils';
 
 interface PickSkateAndTimeslotProps {
   setView: Dispatch<{ view: Views; props?: UserDecision }>;

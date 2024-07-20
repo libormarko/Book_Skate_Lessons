@@ -7,8 +7,8 @@ import {
 } from './SummaryPage.styles';
 import { Button } from '@mui/material';
 import ArrowForward from '@mui/icons-material/ArrowForward';
-import { i18nEN } from '../apiData/i18nEN';
-import { UserDecision } from '../types/common';
+import { i18nEN } from '../../apiData/i18nEN';
+import { UserDecision } from '../../types/common';
 
 interface SummaryPageProps {
   userDecision: UserDecision | undefined;

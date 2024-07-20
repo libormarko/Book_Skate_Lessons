@@ -12,7 +12,7 @@ import {
   SkateParkFeaturesWrapper,
   Features
 } from './ChooseLocation.styles';
-import { SkateLocationData, SelectedSkatePark } from '../types/common';
+import { SkateLocationData, SelectedSkatePark } from '../../types/common';
 import { Radio, RadioGroup, FormControl } from '@mui/material';
 import { Sheet } from '@mui/joy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';

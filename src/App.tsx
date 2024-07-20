@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
-import ChooseLocation from './ChooseLocation/ChooseLocation';
-import PickSkateAndTimeslot from './PickSkateAndTimeslot/PickSkateAndTimeslot';
-import SummaryPage from './SummaryPage/SummaryPage';
+import ChooseLocation from './components/ChooseLocation/ChooseLocation';
+import PickSkateAndTimeslot from './components/PickSkateAndTimeslot/PickSkateAndTimeslot';
+import SummaryPage from './components/SummaryPage/SummaryPage';
 import { AppContainer } from './App.styles';
 import { UserDecision } from './types/common';
 import { getItemFromSessionStorage } from './utils/utils';

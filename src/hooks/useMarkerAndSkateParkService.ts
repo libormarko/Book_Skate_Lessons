@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { locationPins } from './locationPins';
+import { locationPins } from '../components/ChooseLocation/locationPins';
 import tt from '@tomtom-international/web-sdk-maps';
 import { scrollSkateParkItemToTheTop } from '../utils/utils';
 import { SelectedSkatePark, SkateLocationData } from '../types/common';

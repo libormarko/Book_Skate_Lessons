@@ -13,12 +13,12 @@ import {
   SkateParkFeaturesWrapper,
   Features
 } from './ChooseLocation.styles';
-import { SkateLocationData, SelectedSkatePark } from '../types/common';
+import { SkateLocationData, SelectedSkatePark } from '../../types/common';
 import { Radio } from '@mui/material';
 import { Sheet } from '@mui/joy';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faMapLocationDot, faCircleInfo } from '@fortawesome/free-solid-svg-icons';
-import { useDesktopOrMobileView } from '../hooks/useDesktopOrMobileView';
+import { useDesktopOrMobileView } from '../../hooks/useDesktopOrMobileView';
 
 interface MapProps {
   mapElement: any;

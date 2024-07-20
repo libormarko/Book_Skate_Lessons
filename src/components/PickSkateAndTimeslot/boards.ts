@@ -1,4 +1,4 @@
-import { Boards } from '../types/common';
+import { Boards } from '../../types/common';
 
 export const boards: Boards[] = [
   {

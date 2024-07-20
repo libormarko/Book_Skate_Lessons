@@ -1,5 +1,5 @@
 import { Box } from '@mui/material';
-import { TabContent } from './TabPanel.styles';
+import { TabContent } from './ChooseLocation.styles';
 
 export const TabPanel: React.FC<any> = (props) => {
   const { children, value, index } = props;

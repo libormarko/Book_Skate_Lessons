@@ -7,17 +7,16 @@ import {
   ChooseLocationBodyMobile,
   ChooseLocationBodyDesktop
 } from './ChooseLocation.styles';
-import { apiData } from '../apiData/skateLocations';
-import { SkateLocationData, UserDecision, Views } from '../types/common';
+import { apiData } from '../../apiData/skateLocations';
+import { SkateLocationData, UserDecision, Views } from '../../types/common';
 import { Button, Box, Tabs, Tab } from '@mui/material';
 import ArrowForward from '@mui/icons-material/ArrowForward';
-import * as variables from '../variables';
-import { useDesktopOrMobileView } from '../hooks/useDesktopOrMobileView';
-import { useMarkerAndSkateParkService } from './useMarkerAndSkateParkService';
-import { scrollSkateParkItemToTheTop } from '../utils/utils';
-import { TabPanel } from '../TabPanel/TabPanel';
-import { i18nEN } from '../apiData/i18nEN';
-import { getItemFromSessionStorage } from '../utils/utils';
+import { useDesktopOrMobileView } from '../../hooks/useDesktopOrMobileView';
+import { useMarkerAndSkateParkService } from '../../hooks/useMarkerAndSkateParkService';
+import { scrollSkateParkItemToTheTop } from '../../utils/utils';
+import { TabPanel } from './TabPanel';
+import { i18nEN } from '../../apiData/i18nEN';
+import { getItemFromSessionStorage } from '../../utils/utils';
 import { MapComponent } from './Map';
 import { SkateParks } from './SkateParks';
 

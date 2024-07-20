@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import * as variables from '../variables';
+import * as variables from '../../variables';
 
 export const ChooseLocationContainer = styled.div`
   display: flex;
@@ -131,4 +131,8 @@ export const SkateParkFeaturesWrapper = styled.div`
 
 export const Features = styled.div`
   margin-left: ${variables.spacingS};
+`;
+
+export const TabContent = styled.div<{ hidden: boolean }>`
+  display: ${(props) => (props.hidden ? 'none' : 'block')};
 `;
