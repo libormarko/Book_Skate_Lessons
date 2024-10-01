@@ -20,6 +20,10 @@ This is a MVP use case project to book a skate lesson. I built it with newest up
 3. Open terminal and run npm install
 4. Run npm run start
 
+## Live demo
+
+You can find a live demo [here](https://libormarko.github.io/Book_Skate_Lessons/)
+
 ## Screenshot of the webpage
 
 ![Screenshot of the webpage](./screenshot.png)
