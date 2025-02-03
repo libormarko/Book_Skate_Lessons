@@ -7,7 +7,6 @@ import {
   ChooseLocationBodyMobile,
   ChooseLocationBodyDesktop
 } from './ChooseLocation.styles';
-import { apiData } from '../../apiData/skateLocations';
 import { SkateLocationData, UserDecision, Views } from '../../types/common';
 import { Button, Box, Tabs, Tab } from '@mui/material';
 import ArrowForward from '@mui/icons-material/ArrowForward';
@@ -34,7 +33,7 @@ export const ChooseLocation: React.FC<ChooseLocationProps> = ({ setView }) => {
   const [mapLongitude, _setMapLongitude] = useState<number>(13.404954);
   const [mapZoom, _setMapZoom] = useState<number>(10);
   const [map, setMap] = useState<any>();
-  const [skateParks, _setSkateParks] = useState<SkateLocationData[]>(apiData);
+  const [skateParks, setSkateParks] = useState<SkateLocationData[]>([]);
   const [selectedTab, setSelectedTab] = useState(0);
 
   const isDesktop = useDesktopOrMobileView() === 'desktop';
@@ -45,6 +44,19 @@ export const ChooseLocation: React.FC<ChooseLocationProps> = ({ setView }) => {
     skateParkItemsRef,
     skateParksListRef
   );
+
+  useEffect(() => {
+    const fetchSkateLocations = async () => {
+      try {
+        const response = await fetch('http://localhost:5001/api/skateLocations');
+        const data = await response.json();
+        setSkateParks(data);
+      } catch (error) {
+        console.error('Error fetching skate locations:', error);
+      }
+    };
+    fetchSkateLocations();
+  }, []);
 
   useEffect(() => {
     const mapInstance = tt.map({
