@@ -18,6 +18,7 @@ import { i18nEN } from '../../apiData/i18nEN';
 import { getItemFromSessionStorage } from '../../utils/utils';
 import { MapComponent } from './Map';
 import { SkateParks } from './SkateParks';
+import { apiData } from '../../apiData/skateLocations';
 
 interface ChooseLocationProps {
   setView: Dispatch<{ view: Views }>;
@@ -46,16 +47,21 @@ export const ChooseLocation: React.FC<ChooseLocationProps> = ({ setView }) => {
   );
 
   useEffect(() => {
-    const fetchSkateLocations = async () => {
-      try {
-        const response = await fetch('http://localhost:5001/api/skateLocations');
-        const data = await response.json();
-        setSkateParks(data);
-      } catch (error) {
-        console.error('Error fetching skate locations:', error);
-      }
-    };
-    fetchSkateLocations();
+    // if in localhost then use this, otherwise use mockApi
+    if (location.hostname === 'localhost' || location.hostname === '127.0.0.1') {
+      const fetchSkateLocations = async () => {
+        try {
+          const response = await fetch('http://localhost:5001/api/skateLocations');
+          const data = await response.json();
+          setSkateParks(data);
+        } catch (error) {
+          console.error('Error fetching skate locations:', error);
+        }
+      };
+      fetchSkateLocations();
+    } else {
+      setSkateParks(apiData);
+    }
   }, []);
 
   useEffect(() => {
