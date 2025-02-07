@@ -58,7 +58,7 @@ export const TimeslotPicker: React.FC<TimeslotPickerProps> = ({
             <DatePicker
               defaultValue={(selectedTimeslot?.date && dayjs(selectedTimeslot?.date)) || null}
               disablePast
-              maxDate={dayjs('2024-12-31')}
+              maxDate={dayjs('2025-12-31')}
               onChange={(value) => handleDatePick(value)}
             />
           </DatePickerContainer>
